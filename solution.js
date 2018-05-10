@@ -1,13 +1,28 @@
 import React from 'react'
 
 export const FilterableProductTable = React.createClass({
+    getInitialState() {
+        return {
+            filterText: '',
+            inStockOnly: false,
+        };
+    },
+
     render() {
         const products = this.props.products;
+        const { filterText, inStockOnly } = this.state;
 
         return (
             <div>
-                <SearchBar/>
-                <ProductTable products={products}/>
+                <SearchBar
+                    filterText={filterText}
+                    inStockOnly={inStockOnly}
+                />
+                <ProductTable
+                    products={products}
+                    filterText={filterText}
+                    inStockOnly={inStockOnly}
+                />
             </div>
 
         )
@@ -17,6 +32,7 @@ export const FilterableProductTable = React.createClass({
 })
 export const SearchBar = React.createClass({
     render() {
+        const { filterText, inStockOnly } = this.props;
         return (
             <form>
                 <input type="search" placeholder="What are you looking for?"/>
@@ -30,12 +46,16 @@ export const SearchBar = React.createClass({
 })
 export const ProductTable = React.createClass({
     render() {
-        const products = this.props.products;
+        const { products, filterText, inStockOnly } = this.props;
 
         const rows = [];
         let currentCategory;
 
-        products.forEach((item) => {
+        products.filter((product) => {
+            const stockCond = !inStockOnly || inStockOnly && product.stocked;
+            const nameCond = product.name.toLowerCase().indexOf(filterText) !== -1;
+            return stockCond && nameCond;
+        }).forEach((item) => {
             if (item.category !== currentCategory) {
                 currentCategory = item.category;
 
@@ -44,13 +64,13 @@ export const ProductTable = React.createClass({
                         key={currentCategory}
                         category={currentCategory}
                     />
-                ))
+                ));
             }
 
             rows.push((
                 <ProductRow key={item.name} product={item}/>
-            ))
-        })
+            ));
+        });
 
         return (
             <table>
