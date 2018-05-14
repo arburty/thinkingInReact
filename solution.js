@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 
 export const FilterableProductTable = React.createClass({
     getInitialState() {
@@ -12,8 +13,8 @@ export const FilterableProductTable = React.createClass({
         this.setState({
             filterText: filterText,
             inStockOnly: inStockOnly
-        })
-    }
+        });
+    },
 
     render() {
         const products = this.props.products;
@@ -41,9 +42,11 @@ export const FilterableProductTable = React.createClass({
 export const SearchBar = React.createClass({
     handleChange() {
         const filterText = this.filterText.value;
-        const inStockOnly = this.inStockOnly.value;
+        const inStockOnly = this.inStockOnly.checked;
+
         this.props.onUserInput(filterText, inStockOnly);
-    }
+    },
+
     render() {
         const { filterText, inStockOnly } = this.props;
         return (
@@ -62,7 +65,7 @@ export const SearchBar = React.createClass({
                         checked = {inStockOnly}
                         onChange = {this.handleChange}
                     />
-                Only show products in stock
+                    Only show products in stock
                 </label>
             </form>
         )
